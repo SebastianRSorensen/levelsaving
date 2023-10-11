@@ -1,0 +1,35 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id         Int          @id @default(autoincrement())
+  firstName  String
+  lastName   String
+  validated  Boolean
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  savinggoal Savinggoal[]
+}
+
+model Savinggoal {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  goalName      String
+  targetAmount  Int
+  currentAmount Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "savinggaol_userID_fkey")
+}
